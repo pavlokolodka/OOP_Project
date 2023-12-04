@@ -2,23 +2,28 @@
 {
     public class UserManager
     {
-        private IUserDao<User> UserDao;         
-        
-        void createUser(User user)
+        private IUserDao<User> UserDao;
+
+        public void createUser(User user)
         {
             throw new NotImplementedException();
         }
-        User findUser(string nickname)
+        public User findUser(string nickname)
         {
             throw new NotImplementedException();
         }
 
-        void updateUser(User user)
+        public void updateUser(User user)
         {
             throw new NotImplementedException();
         }
 
-        void deleteUser(int userId)
+        public void deleteUser(int userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserManager(IUserDao<User> userDao)
         {
             throw new NotImplementedException();
         }

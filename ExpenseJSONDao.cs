@@ -12,7 +12,7 @@
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<Expense> Find(Func<Expense, bool> filter = null)
+        public override IEnumerable<Expense> Find(Predicate<Expense> filter = null)
         {
             throw new NotImplementedException();
         }

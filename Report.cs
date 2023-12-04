@@ -6,13 +6,13 @@
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-        string Title { get; set; }
-        string TotalAmount { get; set; }
-        int UserId { get; set; }
-        string isViwed { get; set; }
+        public string Title { get; set; }
+        public  string TotalAmount { get; set; }
+        public int UserId { get; set; }
+        public string isViwed { get; set; }
 
 
-        Report(string title, decimal amount, int userId)
+        public Report(string title, decimal amount, int userId)
         {
             throw new NotImplementedException();
         }       

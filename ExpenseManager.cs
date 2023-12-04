@@ -2,25 +2,30 @@
 {
     public class ExpenseManager
     {
-        private Dao<Expense> ExpenseDao;         
-        
-        void createExpense(Expense expense)
+        private Dao<Expense> ExpenseDao;
+
+        public void CreateExpense(Expense expense)
         {
             throw new NotImplementedException();
         }
-        List<Expense> findExpenses(int userId)
+        public List<Expense> FindExpenses(int userId)
         {
             throw new NotImplementedException();
         }
 
-        void updateExpense(Expense expense)
+        public void UpdateExpense(Expense expense)
         {
             throw new NotImplementedException();
         }
 
-        void deleteExpense(int expenseId)
+        public void DeleteExpense(int expenseId)
         {
             throw new NotImplementedException();
         }
+
+        public ExpenseManager(Dao<Expense> expenseDao)
+        {
+            throw new NotImplementedException();    
+        }       
     }
 }

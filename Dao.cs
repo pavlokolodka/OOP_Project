@@ -18,7 +18,7 @@
 
         abstract public void Create(T entity);
 
-        abstract public IEnumerable<T> Find(Func<T, bool> filter = null);
+        abstract public IEnumerable<T> Find(Predicate<T> filter = null);
 
         abstract public T FindOne(int id);       
     }

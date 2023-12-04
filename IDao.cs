@@ -5,7 +5,7 @@
         void Update(T entity);
         void Delete(int id);
         void Create(T entity);
-        IEnumerable<T> Find(Func<T, bool> filter = null);
+        IEnumerable<T> Find(Predicate<T> filter = null);
         T FindOne(int id);
     }
 }

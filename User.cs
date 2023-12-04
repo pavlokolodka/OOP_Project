@@ -6,13 +6,13 @@
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-        string FirstName { get; set; }
-        string LastName { get; set; }
-        string Password { get; set; }
-        string Nickname { get; set; }
-      
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Password { get; set; }
+        public string Nickname { get; set; }
 
-        User(string firstName, string lastName, string password, string nickname)
+
+        public User(string firstName, string lastName, string password, string nickname)
         {
             throw new NotImplementedException();
         }       

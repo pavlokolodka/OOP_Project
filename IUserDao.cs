@@ -2,6 +2,6 @@
 {
     public interface IUserDao<T> : IDao<T> 
     {
-        T FindByNickname(int id);
+        T FindByNickname(string nickname);
     }
 }

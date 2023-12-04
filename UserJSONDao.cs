@@ -12,12 +12,12 @@
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<User> Find(Func<User, bool> filter = null)
+        public override IEnumerable<User> Find(Predicate<User> filter = null)
         {
             throw new NotImplementedException();
-        }
+        }             
 
-        public User FindByNickname(int id)
+        public User FindByNickname(string nickname)
         {
             throw new NotImplementedException();
         }

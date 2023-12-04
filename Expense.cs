@@ -6,11 +6,11 @@
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-        string Name { get; set; }
-        ExpenseCategory Category { get; set; }
-        decimal Amount { get; set; }
-        int UserId { get; set; }
-        Expense(int userId, string name, decimal amount, ExpenseCategory category)
+        public string Name { get; set; }
+        public ExpenseCategory Category { get; set; }
+        public decimal Amount { get; set; }
+        public int UserId { get; set; }
+        public Expense(int userId, string name, decimal amount, ExpenseCategory category)
         {
             throw new NotImplementedException();
         }
