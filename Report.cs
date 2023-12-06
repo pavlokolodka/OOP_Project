@@ -17,6 +17,12 @@
             Title = title;
             TotalAmount = amount;
             UserId = userId;
-        }       
+        }
+        public override string ToString()
+        {
+            return $"\nReport ID: {Id},\nTitle: {Title},\nTotal Amount: {TotalAmount},\nUser ID: {UserId},\nViewed: {isViwed},\nCreated At: {CreatedAt},\nUpdated At: {UpdatedAt}";
+        }
+
+
     }
 }

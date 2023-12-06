@@ -89,7 +89,6 @@ namespace OOP_Project
                 existingUser.FirstName = entity.FirstName;
                 existingUser.LastName = entity.LastName;
                 existingUser.Password = entity.Password;
-                existingUser.Nickname = entity.Nickname;
                 existingUser.UpdatedAt = DateTime.Now;
 
                 SaveData();

@@ -49,7 +49,7 @@ namespace OOP_Project
                 throw new ArgumentNullException(nameof(report), "Report cannot be null.");
             }
             
-            Console.WriteLine($"Report ID: {report.Id}");
+            Console.WriteLine($"\nReport ID: {report.Id}");
             Console.WriteLine($"Title: {report.Title}");
             Console.WriteLine($"Total Amount: {report.TotalAmount:C}");
             Console.WriteLine($"User ID: {report.UserId}");

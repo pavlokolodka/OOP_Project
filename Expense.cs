@@ -30,6 +30,11 @@
             Category = category;
         }
 
+        public override string ToString()
+        {
+            return $"\nName: {Name},\nAmount: {Amount},\nCategory: {Category},\nCreatedAt: {CreatedAt},\nUpdatedAt: {UpdatedAt}";
+        }
+
         public int CompareTo(Expense? other)
         {
             if (other == null)

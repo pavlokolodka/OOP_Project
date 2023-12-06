@@ -20,5 +20,10 @@ namespace OOP_Project
             Password = password;
             Nickname = nickname;
         }
+
+        public override string ToString()
+        {
+            return $"\nFirst name: {FirstName},\nSecond name: {LastName},\nNickname: {Nickname},\nCreated at: {CreatedAt},\nUpdated at: {UpdatedAt},";
+        }
     }
 }
