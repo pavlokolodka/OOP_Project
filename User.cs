@@ -1,4 +1,6 @@
-﻿namespace OOP_Project
+﻿using System;
+
+namespace OOP_Project
 {
     public class User : IEntity
     {
@@ -11,10 +13,12 @@
         public string Password { get; set; }
         public string Nickname { get; set; }
 
-
         public User(string firstName, string lastName, string password, string nickname)
         {
-            throw new NotImplementedException();
-        }       
+            FirstName = firstName;
+            LastName = lastName;
+            Password = password;
+            Nickname = nickname;
+        }
     }
 }

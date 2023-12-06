@@ -2,21 +2,24 @@
 {
     public abstract class Dao<T> : IDao<T> where T : IEntity
     {
+        abstract protected List<IEntity> Entities { get; set; }
+
         protected T GenerateUpdatedAt(T entity)
         {
-            throw new NotImplementedException();
+            entity.UpdatedAt = DateTime.Now;
+            return entity;
         }
 
-        protected T GenerateId(T entity)
+        protected int GenerateId()
         {
-            throw new NotImplementedException();
+            return Entities.Count + 1;
         }
 
         abstract public void Update(T entity);
 
         abstract public void Delete(int id);
 
-        abstract public void Create(T entity);
+        abstract public T Create(T entity);
 
         abstract public IEnumerable<T> Find(Predicate<T> filter = null);
 

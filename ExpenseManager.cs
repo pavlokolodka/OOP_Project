@@ -4,28 +4,28 @@
     {
         private Dao<Expense> ExpenseDao;
 
-        public void CreateExpense(Expense expense)
+        public Expense CreateExpense(Expense expense)
         {
-            throw new NotImplementedException();
+            return ExpenseDao.Create(expense);  
         }
         public List<Expense> FindExpenses(int userId)
         {
-            throw new NotImplementedException();
+            return (List<Expense>)ExpenseDao.Find(e => e.UserId == userId);
         }
 
         public void UpdateExpense(Expense expense)
         {
-            throw new NotImplementedException();
+            ExpenseDao.Update(expense); 
         }
 
         public void DeleteExpense(int expenseId)
         {
-            throw new NotImplementedException();
+            ExpenseDao.Delete(expenseId);
         }
 
         public ExpenseManager(Dao<Expense> expenseDao)
         {
-            throw new NotImplementedException();    
+            ExpenseDao = expenseDao;
         }       
     }
 }

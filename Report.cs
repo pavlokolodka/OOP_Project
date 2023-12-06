@@ -7,14 +7,16 @@
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public string Title { get; set; }
-        public  string TotalAmount { get; set; }
+        public decimal TotalAmount { get; set; }
         public int UserId { get; set; }
-        public string isViwed { get; set; }
+        public bool isViwed { get; set; } = false;
 
 
         public Report(string title, decimal amount, int userId)
         {
-            throw new NotImplementedException();
+            Title = title;
+            TotalAmount = amount;
+            UserId = userId;
         }       
     }
 }

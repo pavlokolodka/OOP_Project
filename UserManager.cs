@@ -4,28 +4,29 @@
     {
         private IUserDao<User> UserDao;
 
-        public void createUser(User user)
+        public User createUser(User user)
         {
-            throw new NotImplementedException();
+            var createdUser = UserDao.Create(user);
+            return createdUser;
         }
         public User findUser(string nickname)
         {
-            throw new NotImplementedException();
+            return UserDao.FindByNickname(nickname);
         }
 
         public void updateUser(User user)
         {
-            throw new NotImplementedException();
+            UserDao.Update(user);
         }
 
         public void deleteUser(int userId)
         {
-            throw new NotImplementedException();
+           UserDao.Delete(userId);
         }
 
         public UserManager(IUserDao<User> userDao)
         {
-            throw new NotImplementedException();
+            this.UserDao = userDao;
         }
     }
 }

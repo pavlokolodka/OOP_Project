@@ -4,7 +4,7 @@
     {
         void Update(T entity);
         void Delete(int id);
-        void Create(T entity);
+        T Create(T entity);
         IEnumerable<T> Find(Predicate<T> filter = null);
         T FindOne(int id);
     }
