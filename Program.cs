@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace OOP_Project
 {
@@ -9,12 +10,33 @@ namespace OOP_Project
         private static ExpenseReport expenseReport;
         private static UserManager userManager;
         private static ExpenseManager expenseManager;
-        
+        public delegate void UserLoginEventHandler(UserLoginEventArgs e);
+        public static event UserLoginEventHandler UserLoggedIn;
+
+        private static void GlobalLogger(string message) {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\nSystem: " + message);
+            Console.ResetColor();
+        }
+        private static void Greeting(string name)
+        {
+            Console.WriteLine($"\nWelcome, {name}!");
+        }
+    
         static void Main()
         {
             expenseReport = new ExpenseReport();
             userManager = new UserManager(new UserJSONDao());
             expenseManager = new ExpenseManager(new ExpenseJSONDao());
+
+
+            // delegates
+            UserLoggedIn += UserLoginLogger.LogUserLogin;
+            userManager.userLogger = GlobalLogger;
+            expenseReport.ReportCreated += (sender, e) =>
+            {
+                Console.WriteLine($"\nReport {e.CreatedReport.Title} created successfully");
+            };
 
 
             bool exit = false;
@@ -31,7 +53,7 @@ namespace OOP_Project
                     switch (choice)
                     {
                         case 1:
-                            SignIn();
+                            SignIn(Greeting);
                             break;
                         case 2:
                             SignUp();
@@ -50,9 +72,9 @@ namespace OOP_Project
                 }
 
             } while (!exit);
-        }
+        }       
 
-        private static void SignIn()
+        private static void SignIn(Action<string> greeting)
         {
             Console.Write("Enter your nickname: ");
             string nickname = Console.ReadLine();
@@ -66,7 +88,9 @@ namespace OOP_Project
 
                 if (authenticatedUser != null && authenticatedUser.Password == password)
                 {
-                    Console.WriteLine($"\nWelcome, {authenticatedUser.FirstName}!");
+                    greeting(authenticatedUser.FirstName);
+                    UserLoggedIn?.Invoke(new UserLoginEventArgs(DateTime.Now, authenticatedUser.Nickname));
+                    
                     UserMenu();
                 }
                 else
@@ -118,72 +142,69 @@ namespace OOP_Project
         {
             try
             {
-                Console.Write("Enter expense name: ");
-                string expenseName = Console.ReadLine();
+                string expenseName = GetValidInput("Enter expense name: ", ValidateExpenseName, "Expense name cannot be empty.");
 
-                Console.Write("Enter expense amount: ");
-                if (decimal.TryParse(Console.ReadLine(), out decimal expenseAmount))
+                decimal expenseAmount = decimal.Parse(GetValidInput("Enter expense amount: ", ValidateExpenseAmount, "Invalid expense amount. Please enter a valid positive number."));
+
+                Console.WriteLine("Expense Categories:");
+                foreach (ExpenseCategory category in Enum.GetValues(typeof(ExpenseCategory)))
                 {
-
-                    if (expenseAmount < 0)
-                    {
-                        throw new ArgumentException("Expense amount cannot be negative.", nameof(expenseAmount));
-                    }
-
-                    Console.WriteLine("Expense Categories:");
-                    foreach (ExpenseCategory category in Enum.GetValues(typeof(ExpenseCategory)))
-                    {
-                        Console.WriteLine($"- {category}");
-                    }
-
-                    Console.Write("Enter expense category: ");
-                    string inputCategory = Console.ReadLine();
-
-                    if (decimal.TryParse(inputCategory, out _))
-                    {
-                        throw new FormatException("Invalid expense category. Please enter a valid category name.");
-                    }
-
-                    inputCategory = inputCategory?.ToLower(); 
-
-                    if (Enum.TryParse<ExpenseCategory>(inputCategory, true, out ExpenseCategory expenseCategory))
-                    {
-                        try
-                        {
-                            Expense newExpense = new Expense(authenticatedUser.Id, expenseName, expenseAmount, expenseCategory);
-                            expenseManager.CreateExpense(newExpense);
-                            Console.WriteLine("Expense created successfully!");
-                        } catch(Exception ex) {
-                            Console.WriteLine(ex.Message);
-                            return;
-                        }                       
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Invalid expense category.");
-                    }
+                    Console.WriteLine($"- {category}");
                 }
-                else
-                {
-                    throw new FormatException("Invalid expense amount. Please enter a valid number.");
-                }
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-            }
-            catch (FormatException ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
+
+                ExpenseCategory expenseCategory = Enum.Parse<ExpenseCategory>(
+                    GetValidInput("Enter expense category: ", ValidateExpenseCategory, "Invalid expense category. Please enter a valid category name.")
+                        .ToLower(),
+                    ignoreCase: true
+                );
+
+                Expense newExpense = new Expense(authenticatedUser.Id, expenseName, expenseAmount, expenseCategory);
+                expenseManager.CreateExpense(newExpense);
+                Console.WriteLine("\nExpense created successfully!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+                Console.WriteLine($"\nError: {ex.Message}");
             }
         }
 
+        private static string GetValidInput(string prompt, Func<string, bool> validationFunc, string errorMessage)
+        {
+            string userInput;
+            do
+            {
+                Console.Write(prompt);
+                userInput = Console.ReadLine();
 
+                if (!validationFunc(userInput))
+                {
+                    Console.WriteLine($"\nError: {errorMessage}");
+                }
 
+            } while (!validationFunc(userInput));
+
+            return userInput;
+        }
+
+        private static bool ValidateExpenseName(string input)
+        {
+            return !string.IsNullOrWhiteSpace(input);
+        }
+
+        private static bool ValidateExpenseAmount(string input)
+        {
+            return decimal.TryParse(input, out decimal amount) && amount >= 0;
+        }
+
+        private static bool ValidateExpenseCategory(string input)
+        {
+            if (decimal.TryParse(input, out _))
+            {
+                return false; 
+            }
+
+            return Enum.TryParse<ExpenseCategory>(input, true, out _);
+        }
         private static void UserMenu()
         {
             bool logout = false;
@@ -284,9 +305,9 @@ namespace OOP_Project
 
                             break;
                         case 6:
-                            Console.WriteLine("\nEnter a name of expense to update");
-                            string expenseNameToUpdate = Console.ReadLine();
-
+                            string expenseNameToUpdate;
+                            expenseNameToUpdate = GetValidInput("Enter a name of expense to update: ", ValidateExpenseName, "Invalid expense name.");
+                      
                             var createdExpenses = expenseManager.FindExpenses(authenticatedUser.Id);
 
                             if (createdExpenses.Count == 0)
@@ -301,31 +322,27 @@ namespace OOP_Project
                             {
                                 Console.WriteLine($"\nCannot find expense {expenseNameToUpdate}");
                                 break;
-
                             }
+
                             // NAME
-                            Console.WriteLine("\nEnter a new name of expense to update");
-                            string newExpenseNameToUpdate = Console.ReadLine();
-
-                            if (string.IsNullOrEmpty(newExpenseNameToUpdate)) {
-                                Console.WriteLine("\nInvalid expense name.");
-                                break;
-                            }
-
-                            Expense existed = createdExpenses.FirstOrDefault(e => e.Name == newExpenseNameToUpdate);
-
-                            if (existed != null)
+                            string newExpenseNameToUpdate;
+                            do
                             {
-                                Console.WriteLine("\nThe expense with such name already exists.");
-                            }
+                                newExpenseNameToUpdate = GetValidInput("Enter a new name of expense to update: ", ValidateExpenseName, "Invalid expense name.");
 
-                            // AMOUNT
-                            Console.WriteLine("\nEnter new amount of expense to update");
-                            if (!decimal.TryParse(Console.ReadLine(), out decimal expenseAmount))
-                            { 
-                                Console.WriteLine("\nInvalid expense amount. Please enter a valid number.");
+                                Expense existed = createdExpenses.FirstOrDefault(e => e.Name == newExpenseNameToUpdate);
+
+                                if (existed != null && newExpenseNameToUpdate != expenseToUpdate.Name)
+                                {
+                                    Console.WriteLine("\nThe expense with such name already exists.");
+                                    continue;
+                                }
+
                                 break;
-                            }
+                            } while (true);
+
+                           decimal expenseAmount =  decimal.Parse(GetValidInput("Enter new amount of expense to update: ", ValidateExpenseAmount, "Invalid expense amount."));
+                     
 
                             // CATEGORY
                             Console.WriteLine("Expense Categories:");
@@ -333,39 +350,24 @@ namespace OOP_Project
                             {
                                 Console.WriteLine($"- {category}");
                             }
-                            Console.WriteLine("\nEnter a new category");
-                            string expenseCategoryToUpdate = Console.ReadLine();
 
-                            if (decimal.TryParse(expenseCategoryToUpdate, out _))
+                            string expenseCategoryToUpdate = GetValidInput("Enter a new category: ", ValidateExpenseCategory, "Invalid expense category. Please enter a valid category name.");
+
+                           try
                             {
-                                Console.WriteLine("\nInvalid expense category. Please enter a valid category name.");
+                                expenseToUpdate.Category = Enum.Parse<ExpenseCategory>(expenseCategoryToUpdate, true);
+                                expenseToUpdate.Name = newExpenseNameToUpdate;
+                                expenseToUpdate.Amount = expenseAmount;
+
+                                expenseManager.UpdateExpense(expenseToUpdate);
+                                Console.WriteLine("\nSuccessfully updated");
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
                                 break;
                             }
 
-                            expenseCategoryToUpdate = expenseCategoryToUpdate?.ToLower();
-
-                            if (Enum.TryParse<ExpenseCategory>(expenseCategoryToUpdate, true, out ExpenseCategory expenseCategory))
-                            {
-                                try
-                                {
-                                    expenseToUpdate.Category = expenseCategory;
-                                    expenseToUpdate.Name = newExpenseNameToUpdate;
-                                    expenseToUpdate.Amount = expenseAmount;
-
-                                    expenseManager.UpdateExpense(expenseToUpdate);
-                                    Console.WriteLine("\nSuccessfully updated");
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("\nInvalid expense category.");
-                                break;
-                            }                    
 
                             break;
                         case 7:
@@ -415,8 +417,7 @@ namespace OOP_Project
                                 break;
                             }
 
-                            expenseReport.CreateReport(reportTitle, filteredExpenses);
-                            Console.WriteLine($"Report created successfully");
+                            expenseReport.CreateReport(reportTitle, filteredExpenses);                          
 
                             break;
                         case 9:

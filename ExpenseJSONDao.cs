@@ -38,7 +38,7 @@ namespace OOP_Project
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            if (expenses.Any(e => e.Name == entity.Name))
+            if (expenses.Any(e => e.Name == entity.Name && e.UserId == entity.UserId))
             {
                 throw new InvalidOperationException($"Expense with name'{entity.Name}' already exists.");
             }

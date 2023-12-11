@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace OOP_Project
+﻿namespace OOP_Project
 {
     public class ExpenseReport : IExpenseReport
     {
+        public event EventHandler<ReportEventArgs>? ReportCreated;
+
         public List<Report> Reports { get; private set; }
 
         public ExpenseReport()
@@ -25,6 +23,8 @@ namespace OOP_Project
             
             report.Id = GenerateId();
             Reports.Add(report);
+
+            OnReportCreated(new ReportEventArgs(report));
 
             return report;
         }
@@ -60,6 +60,11 @@ namespace OOP_Project
                
             report.isViwed = true;
             
+        }
+
+        protected virtual void OnReportCreated(ReportEventArgs e)
+        {
+            ReportCreated?.Invoke(this, e);
         }
 
         private int GenerateId()
